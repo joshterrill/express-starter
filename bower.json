@@ -1,0 +1,24 @@
+{
+  "name": "express-starter",
+  "version": "1.0.0",
+  "authors": [
+    "Joshua Terrill <joshterrill.dev@gmail.com>"
+  ],
+  "description": "an express starter app for the flavor of apps I like to make",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/joshterrill/express-starter",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "views/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0"
+  }
+}
