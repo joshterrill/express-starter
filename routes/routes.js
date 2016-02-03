@@ -3,7 +3,7 @@ module.exports = function(app) {
 	    res.render('home');
 	});
 
-	app.get("/test/:number", function(req, res) {
+	app.get("/testing/:number", function(req, res) {
 	    var number = req.params.number;
 	    res.json({test: number});
 	});
