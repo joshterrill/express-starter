@@ -5,6 +5,6 @@ module.exports = function(app) {
 
 	app.get("/test/:number", function(req, res) {
 	    var number = req.params.number;
-	    res.json({testing: number});
+	    res.json({test: number});
 	});
 }
