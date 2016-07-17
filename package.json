@@ -4,6 +4,7 @@
   "description": "an express starter app for the flavor of apps I like to make",
   "main": "app.js",
   "scripts": {
+    "build": "npm install && bower install",
     "start": "node app.js"
   },
   "repository": {
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/joshterrill/express-starter#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "dotenv": "^2.0.0",
     "express": "^4.13.3",
     "express-handlebars": "^2.0.1",
     "morgan": "^1.6.1"
