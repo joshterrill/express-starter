@@ -12,6 +12,7 @@ cd express-starter/
 npm install
 ```
 
+
 2. configure by replacing the values in `src/config.json.example` with real values, and then rename it to just `config.json`.
 
 ### build and run
