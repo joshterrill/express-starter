@@ -1,29 +1,30 @@
-import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import mongodb from 'mongodb';
-import api from './api';
-import * as config from './config.json';
-const MongoClient = mongodb.MongoClient;
-
+const express = require('express');
 const app = express();
+const mongodb = require('mongodb');
+const bodyParser = require('body-parser');
+const MongoClient = mongodb.MongoClient;
+const serverPort = process.env.PORT || 3000;
+const dotenv = require('dotenv').config();
 
-app.use(morgan('dev'));
+const api = require('./api');
+const crud = require('./api/crud');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static('public'));
 
-app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({error: err});
-  return;
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  next();
 });
 
-let db = MongoClient.connect(config.environment.mongourl, (err, database) => {
+let db = MongoClient.connect(process.env.MONGODB_URL, (err, client) => {
   if (err) return console.log(err)
-  db = database
-  app.listen(config.port || 3000, () => {
-    console.log('Listening on port ' + config.port);
-    app.use(api({ config, db }));
-  })
+  db = client.db(process.env.MONGODB_DB);
+  app.listen(serverPort, () => {
+    console.log(`Listening on port ${serverPort}`);
+    app.use(api());
+    app.use(crud('user', db));
+  });
 });

@@ -13,15 +13,14 @@ npm install
 ```
 
 
-2. configure by replacing the values in `src/config.json.example` with real values, and then rename it to just `config.json`.
+2. configure by replacing the `<username>, <password>, <database>` values in `.env.example` with real values, and then rename it to just `.env`.
 
 ### build and run
 
 ```
-npm run build
-npm start (or nodemon)
+npm start
+or
+npm run dev
 ```
-
-This should create a `dist/` folder that your app will execute from.
 
 Still a work in progress.
