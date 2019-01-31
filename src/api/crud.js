@@ -4,7 +4,7 @@ const mongodb = require('mongodb');
 module.exports = (context, db) => {
   const crud = Router();
 
-  crud.get(`/api/crud/${context}`, async (req, res) => {
+  crud.get(`/${context}`, async (req, res) => {
     try {
       const data = await db.collection(context).find({}).toArray();
       res.json({
@@ -17,7 +17,7 @@ module.exports = (context, db) => {
     }
   });
 
-  crud.get(`/api/crud/${context}/:query`, async (req, res) => {
+  crud.get(`/${context}/:query`, async (req, res) => {
     // check to see if were filtering or getting by an ID
     if (req.params.query.indexOf('{') === 0) {
       const filter = JSON.parse(req.params.query);
@@ -46,7 +46,7 @@ module.exports = (context, db) => {
     }
   });
 
-  crud.put(`/api/crud/${context}/:id`, async (req, res) => {
+  crud.put(`/${context}/:id`, async (req, res) => {
     const body = req.body;
     delete body._id;
     const _id = req.params.id;
@@ -63,7 +63,7 @@ module.exports = (context, db) => {
     }
   });
 
-  crud.put(`/api/crud/${context}/:id/:field`, async (req, res) => {
+  crud.put(`/${context}/:id/:field`, async (req, res) => {
     const body = req.body;
     const _id = req.params.id;
     const field = req.params.field;
@@ -80,7 +80,7 @@ module.exports = (context, db) => {
     }
   });
 
-  crud.post(`/api/crud/${context}`, async (req, res) => {
+  crud.post(`/${context}`, async (req, res) => {
     const body = req.body;
     try {
       const results = await db.collection(context).insertOne(body);
@@ -95,7 +95,7 @@ module.exports = (context, db) => {
     }
   });
 
-  crud.delete(`/api/crud/${context}/:id`, async (req, res) => {
+  crud.delete(`/${context}/:id`, async (req, res) => {
     const _id = req.params.id;
     try {
       const results = await db.collection(context).deleteOne({_id: new mongodb.ObjectID(_id)});

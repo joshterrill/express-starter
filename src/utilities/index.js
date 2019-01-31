@@ -10,8 +10,8 @@ module.exports = {
   },
   verifyJWT: (token) => {
     const verifyOptions = {
-      issuer:  'RedshiftAI',
-      audience:  'https://redshift.ai',
+      issuer:  process.env.JWT_ISSUER,
+      audience: process.env.JWT_AUDIENCE,
     };
     return jwt.verify(token, process.env.JWT_SECRET, verifyOptions);
   },
