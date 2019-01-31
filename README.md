@@ -33,6 +33,18 @@ app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: [/auth/i]}));
 
 Which is used to handle exceptions for routes that do not require a JWT token. In the example above, only the `/auth` routes are exempt from a JWT token, but it is an array that can hold either regular expressions as shown above or strings.
 
+Once a user logs in through the login endpoint, the receive a JWT token back with the following properties: _id, email, permissions. This token must be used for subsequent calls that are not locked down in the exemption middleware by creating a header called `Authorization` and setting the value to `Bearer <token goes here>`.
+
+### JWT Guard / Permissions
+
+The `express-jwt-permissions` package is also installed which allows you to only allow access to certain routes to users who have a specific permission/role on their JWT token that is being passed through in the header. By default this line is commented out:
+
+```javascript
+app.use('/secret-route-example', guard.check('secretRole'), secretRoutes(db));
+```
+
+But it lets you define a route prefix, add a role or roles that are allowed into that route prefix, and then define the routes that are a part of that prefix. In this example, only users with the role `secretRole` would be allowed to make requests to any routes that start with `/secret-route-example`.
+
 ### CRUD Routes
 
 In the `src/index.js` file there is one example of CRUD route creation. This gives you the ability to have full CRUD access to a mongo collection through various RESTful endpoints such as: get all, get by id, get by ?, save, update, delete, etc. You can create new CRUD endpoints by creating new middlewares that are pointed to a specific context like this;
