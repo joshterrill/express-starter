@@ -1,12 +1,11 @@
 const Router = require('express').Router;
-const mongodb = require('mongodb');
 
-module.exports = (context, db) => {
+module.exports = (context, model) => {
   const crud = Router();
 
   crud.get(`/${context}`, async (req, res) => {
     try {
-      const data = await db.collection(context).find({}).toArray();
+      const data = await model.find({});
       res.json({
         data,
         error: null
@@ -20,21 +19,21 @@ module.exports = (context, db) => {
   crud.get(`/${context}/:query`, async (req, res) => {
     // check to see if were filtering or getting by an ID
     if (req.params.query.indexOf('{') === 0) {
-      const filter = JSON.parse(req.params.query);
       try {
-        const data = await db.collection(context).find(filter).toArray();
+        const filter = JSON.parse(req.params.query);
+        const data = await model.find(filter);
         res.json({
           data,
           error: null
         });
       } catch (non) {
-        const error = `Error getting ${_id} from '${context}'`;
+        const error = `Error getting ${req.params.query} from '${context}'`;
         res.json({data: null, error});
       }
     } else {
       const _id = req.params.query;
       try {
-        const data = db.collection(context).findOne({_id: new mongodb.ObjectID(_id)});
+        const data = await model.findOne({_id});
         res.json({
           data,
           error: null
@@ -51,8 +50,8 @@ module.exports = (context, db) => {
     delete body._id;
     const _id = req.params.id;
     try {
-      const results = await db.collection(context).update({_id: new mongodb.ObjectID(_id)}, body, { upsert: true });
-      const data = await db.collection(context).findOne({_id: new mongodb.ObjectID(_id)})
+      const results = await model.update({_id}, body, { upsert: true });
+      const data = await model.findOne({_id})
       res.json({
         data,
         error: null
@@ -68,8 +67,8 @@ module.exports = (context, db) => {
     const _id = req.params.id;
     const field = req.params.field;
     try {
-      const results = await db.collection(context).update({_id: new mongodb.ObjectID(_id)},{$set: {[field]: body[field]}}, { upsert: true });
-      const data = await db.collection(context).findOne({_id: new mongodb.ObjectID(_id)});
+      const results = await model.update({_id},{$set: {[field]: body[field]}}, { upsert: true });
+      const data = await model.findOne({_id});
       res.json({
         data,
         error: null
@@ -83,8 +82,8 @@ module.exports = (context, db) => {
   crud.post(`/${context}`, async (req, res) => {
     const body = req.body;
     try {
-      const results = await db.collection(context).insertOne(body);
-      const data = await db.collection(context).findOne({_id: new mongodb.ObjectID(results.insertedId)});
+      const results = await model.insertOne(body);
+      const data = await model.findOne({_id: results.insertedId});
       res.json({
         data,
         error: null
@@ -98,7 +97,7 @@ module.exports = (context, db) => {
   crud.delete(`/${context}/:id`, async (req, res) => {
     const _id = req.params.id;
     try {
-      const results = await db.collection(context).deleteOne({_id: new mongodb.ObjectID(_id)});
+      const results = await model.deleteOne({_id});
       res.json({
         data: {_id},
         error: null

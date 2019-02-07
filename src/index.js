@@ -11,6 +11,9 @@ const api = require('./api');
 const crud = require('./api/crud');
 const auth = require('./api/auth');
 
+// mongoose models
+const UserModel = require('./model/User');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: [/auth/i]}));
@@ -24,15 +27,15 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    const db = await mongoose.connect(process.env.MONGODB_URL);
+    const conn = await mongoose.connect(process.env.MONGODB_URL);
     app.listen(port, () => {
       console.log(`Server listening on port ${port}`);
       app.use('/', api());
       app.use('/auth', auth());
-      app.use('/api/crud', crud('User', db));
+      app.use('/api/crud', crud('User', UserModel));
       // app.use('/secret-route-example', guard.check('secretRole'), secretRoutes(db));
     });
   } catch (error) {
     console.log(`Failed to start server on port ${port}`)
   }
-});
+})();

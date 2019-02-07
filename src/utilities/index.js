@@ -15,4 +15,12 @@ module.exports = {
     };
     return jwt.verify(token, process.env.JWT_SECRET, verifyOptions);
   },
+  createSignObjects: (email) => {
+    return signOptions = {
+      issuer:  process.env.JWT_ISSUER,
+      subject:  email,
+      audience: process.env.JWT_AUDIENCE,
+      // expiresIn:  60, // TODO: uncomment this (expires in minutes)
+    };
+  },
 }

@@ -7,21 +7,23 @@ module.exports = (db) => {
   const api = Router();
 
   api.post('/register', async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     try {
-      const user = await UserModel.findOne({email})
-      if (user) {
+      const findUser = await UserModel.findOne({email})
+      if (findUser) {
         res.json({success: false, error: 'Email already exists', data: null});
       } else {
         password = utility.encryptPassword(password);
-        const user = await UserModel.create({
+        let user = await UserModel.create({
           email,
           password,
           createdOn: new Date(),
           lastLoginOn: null,
           permissions: ['user'],
         });
-        res.json({success: true, error: null, data: {user}});
+        user.password = undefined;
+        const payload = jwt.sign({email: user.email, _id: user._id, permissions: user.permissions}, process.env.JWT_SECRET, utility.createSignObjects(user.email));
+        res.json({success: true, error: null, data: {user, payload}});
       }
     } catch (error) {
       res.json({success: false, error, data: null});
@@ -33,14 +35,8 @@ module.exports = (db) => {
     try {
       const user = await UserModel.findOne({email});
       if (utility.comparePassword(password, user.password)) {
-        const signOptions = {
-          issuer:  process.env.JWT_ISSUER,
-          subject:  email,
-          audience: process.env.JWT_AUDIENCE,
-          // expiresIn:  60, // TODO: uncomment this (expires in minutes)
-        };
         await UserModel.updateOne({_id: user._id}, {$set: {lastLoginOn: new Date()}});
-        const payload = jwt.sign({email: user.email, _id: user._id, permissions: user.permissions}, process.env.JWT_SECRET, signOptions);
+        const payload = jwt.sign({email: user.email, _id: user._id, permissions: user.permissions}, process.env.JWT_SECRET, utility.createSignObjects(user.email));
         res.json({success: true, error: null, data: {payload}});
       } else {
         res.json({success: false, error: 'Login failed, please check email and password', data: null});
