@@ -1,16 +1,22 @@
 const express = require('express');
 const app = express();
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const MongoClient = mongodb.MongoClient;
-const serverPort = process.env.PORT || 3000;
+const jwt = require('express-jwt');
+const guard = require('express-jwt-permissions')()
+const port = process.env.PORT || 3000;
 const dotenv = require('dotenv').config();
 
 const api = require('./api');
 const crud = require('./api/crud');
+const auth = require('./api/auth');
+
+// mongoose models
+const UserModel = require('./model/User');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: [/auth/i]}));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -19,12 +25,17 @@ app.use((req, res, next) => {
   next();
 });
 
-let db = MongoClient.connect(process.env.MONGODB_URL, (err, client) => {
-  if (err) return console.log(err)
-  db = client.db(process.env.MONGODB_DB);
-  app.listen(serverPort, () => {
-    console.log(`Listening on port ${serverPort}`);
-    app.use(api());
-    app.use(crud('user', db));
-  });
-});
+(async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URL);
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+      app.use('/', api());
+      app.use('/api/auth', auth());
+      app.use('/api/crud', crud('User', UserModel));
+      // app.use('/secret-route-example', guard.check('secretRole'), secretRoutes(db));
+    });
+  } catch (error) {
+    console.log(`Failed to start server on port ${port}`)
+  }
+})();
