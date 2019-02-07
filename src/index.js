@@ -31,7 +31,7 @@ app.use((req, res, next) => {
     app.listen(port, () => {
       console.log(`Server listening on port ${port}`);
       app.use('/', api());
-      app.use('/auth', auth());
+      app.use('/api/auth', auth());
       app.use('/api/crud', crud('User', UserModel));
       // app.use('/secret-route-example', guard.check('secretRole'), secretRoutes(db));
     });
