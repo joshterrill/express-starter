@@ -12,7 +12,7 @@ const crud = require('./api/crud');
 const auth = require('./api/auth');
 
 // mongoose models
-const UserModel = require('./model/User');
+const UserModel = require('./models/User');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));

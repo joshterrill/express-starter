@@ -25,7 +25,7 @@ npm run dev
 
 ### Authentication / Login / Registration
 
-This server is set up with a simple authentication scheme, model, and registration/login endpoints which give JWT tokens that are enforced as a middleware through the `express-jwt` library. The routes can be found in `src/api/auth.js` and the mongoose model for the User can be found in `src/model/User.js`. In the `src/index.js` file there is a line that looks like this:
+This server is set up with a simple authentication scheme, model, and registration/login endpoints which give JWT tokens that are enforced as a middleware through the `express-jwt` library. The routes can be found in `src/api/auth.js` and the mongoose model for the User can be found in `src/models/User.js`. In the `src/index.js` file there is a line that looks like this:
 
 ```javascript
 app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: [/auth/i]}));

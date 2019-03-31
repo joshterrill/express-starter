@@ -20,7 +20,7 @@ module.exports = {
       issuer:  process.env.JWT_ISSUER,
       subject:  email,
       audience: process.env.JWT_AUDIENCE,
-      // expiresIn:  60, // TODO: uncomment this (expires in minutes)
+      expiresIn:  '8h',
     };
   },
 }
