@@ -34,12 +34,16 @@ module.exports = (db) => {
     const { email, password } = req.body;
     try {
       const user = await UserModel.findOne({email});
-      if (utility.comparePassword(password, user.password)) {
-        await UserModel.updateOne({_id: user._id}, {$set: {lastLoginOn: new Date()}});
-        const payload = jwt.sign({email: user.email, _id: user._id, permissions: user.permissions}, process.env.JWT_SECRET, utility.createSignObjects(user.email));
-        res.json({success: true, error: null, data: {payload}});
+      if (user) {
+        if (utility.comparePassword(password, user.password)) {
+          await UserModel.updateOne({_id: user._id}, {$set: {lastLoginOn: new Date()}});
+          const payload = jwt.sign({email: user.email, _id: user._id, permissions: user.permissions}, process.env.JWT_SECRET, utility.createSignObjects(user.email));
+          res.json({success: true, error: null, data: {payload}});
+        } else {
+          res.json({success: false, error: 'Login failed, please check email and password', data: null});
+        }
       } else {
-        res.json({success: false, error: 'Login failed, please check email and password', data: null});
+        res.json({success: false, error: `Unable to find user with email: '${email}'`, data: null});
       }
     } catch(error) {
       res.json({success: false, error, data: null});

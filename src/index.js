@@ -16,7 +16,7 @@ const UserModel = require('./models/User');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: [/auth/i]}));
+app.use(jwt({ secret: process.env.JWT_SECRET}).unless({path: ['/', /auth/i]}));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
